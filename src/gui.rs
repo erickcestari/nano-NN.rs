@@ -2,6 +2,9 @@ use eframe::egui;
 
 use crate::neural_network::NeuralNetwork;
 
+pub const BRUSH_RADIUS: i32 = 1;
+pub const MAX_INTENSITY: f32 = 1.0;
+
 pub struct DigitApp<F, D>
 where
     F: Fn(f64) -> f64,
@@ -53,14 +56,31 @@ where
 
             if response.dragged() {
                 if let Some(pos) = response.interact_pointer_pos() {
-                    let x = ((pos.x - rect.left()) / 10.0).floor() as usize;
-                    let y = ((pos.y - rect.top()) / 10.0).floor() as usize;
-                    for dy in 0..2 {
-                        for dx in 0..2 {
+                    let x = ((pos.x - rect.left()) / 10.0).floor() as i32;
+                    let y = ((pos.y - rect.top()) / 10.0).floor() as i32;
+
+                    // Apply blur effect in a circular pattern
+                    for dy in -BRUSH_RADIUS..=BRUSH_RADIUS {
+                        for dx in -BRUSH_RADIUS..=BRUSH_RADIUS {
                             let nx = x + dx;
                             let ny = y + dy;
-                            if nx < 28 && ny < 28 {
-                                self.canvas[ny][nx] = 1.0;
+
+                            if nx >= 0 && ny >= 0 && (nx as usize) < 28 && (ny as usize) < 28 {
+                                let distance = ((dx * dx + dy * dy) as f32).sqrt();
+
+                                // Apply Gaussian-like falloff
+                                let intensity = if distance <= BRUSH_RADIUS as f32 {
+                                    MAX_INTENSITY
+                                        * (-distance * distance
+                                            / (BRUSH_RADIUS as f32 * BRUSH_RADIUS as f32))
+                                            .exp()
+                                } else {
+                                    0.0
+                                };
+
+                                let current_value = self.canvas[ny as usize][nx as usize];
+                                self.canvas[ny as usize][nx as usize] =
+                                    (current_value + intensity * 0.3).min(1.0);
                             }
                         }
                     }
