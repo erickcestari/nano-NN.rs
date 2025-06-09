@@ -4,6 +4,7 @@ use crate::neural_network::NeuralNetwork;
 
 pub const BRUSH_RADIUS: i32 = 1;
 pub const MAX_INTENSITY: f32 = 1.0;
+pub const TIME_BETWEEN_PREDICTIONS: f64 = 0.1;
 
 pub struct DigitApp<F, D>
 where
@@ -102,7 +103,7 @@ where
             }
 
             let now = ctx.input(|i| i.time);
-            if now - self.last_prediction_time > 1.0 {
+            if now - self.last_prediction_time > TIME_BETWEEN_PREDICTIONS {
                 self.predict();
                 self.last_prediction_time = now;
             }
