@@ -5,10 +5,11 @@ pub mod neural_network;
 pub const INPUT_SIZE: usize = 784; // 28x28 pixels
 const HIDDEN_SIZE_1: usize = 256; // number of neurons in the first hidden layer
 const HIDDEN_SIZE_2: usize = 128; // number of neurons in the second hidden layer
-const HIDDEN_SIZE_3: usize = 64; // number of neurons in the second hidden layer
-const HIDDEN_SIZE_4: usize = 32; // number of neurons in the second hidden layer
+const HIDDEN_SIZE_3: usize = 64; // number of neurons in the third hidden layer
+const HIDDEN_SIZE_4: usize = 32; // number of neurons in the fourth hidden layer
 pub const OUTPUT_SIZE: usize = 10; // number of classes (0-9)
 
+// You can add more number of layers, if you want.
 pub const LAYERS: &[usize] = &[
     INPUT_SIZE,
     HIDDEN_SIZE_1,
